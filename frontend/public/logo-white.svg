@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Geometric Pattern -->
+    <g transform="translate(100, 100) scale(0.75)">
+        <!-- Isometric Grid Pattern -->
+        <path d="M400 100 L600 200 L600 500 L400 600 L200 500 L200 200 Z" 
+              stroke="white" 
+              stroke-width="4" 
+              fill="none"/>
+        <path d="M400 100 L400 300 L600 400 L600 200 Z" 
+              stroke="white" 
+              stroke-width="4" 
+              fill="none"/>
+        <path d="M400 300 L400 500 L200 400 L200 200 Z" 
+              stroke="white" 
+              stroke-width="4" 
+              fill="none"/>
+        <path d="M400 300 L600 400 L400 500 L200 400 Z" 
+              stroke="white" 
+              stroke-width="4" 
+              fill="none"/>
+    </g>
+    
+    <!-- RAVIONLAB Text -->
+    <text x="400" y="750" 
+          font-family="Arial, sans-serif" 
+          font-size="72" 
+          font-weight="bold" 
+          text-anchor="middle" 
+          fill="white">
+        RAVIONLAB
+    </text>
+</svg> 
