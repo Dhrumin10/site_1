@@ -1,0 +1,137 @@
+# Full Stack Next.js + Node.js Project
+
+This is a monorepo containing both the frontend (Next.js) and backend (Node.js/Express) applications.
+
+## Project Structure
+
+```
+.
+├── frontend/                # Next.js frontend application
+│   ├── src/                # Source files
+│   │   ├── app/           # Next.js app directory
+│   │   ├── components/    # React components
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── lib/          # Frontend utilities
+│   │   ├── styles/       # CSS and style files
+│   │   └── types/        # TypeScript type definitions
+│   ├── public/           # Static files
+│   └── ...               # Config files (next.config.js, etc.)
+│
+├── backend/               # Node.js/Express backend
+│   ├── src/             # Source files
+│   │   ├── routes/     # API routes
+│   │   ├── controllers/ # Route controllers
+│   │   ├── models/     # Data models
+│   │   └── config/     # Configuration files
+│   └── ...             # Config files (package.json, etc.)
+│
+├── documentation/        # Project documentation
+├── .gitignore           # Git ignore rules
+└── README.md            # This file
+```
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- Git
+
+## Getting Started
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   Edit `.env.local` with your configuration.
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend will be available at http://localhost:3000
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your configuration.
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   The API will be available at http://localhost:5000
+
+## Development
+
+### Frontend (Next.js)
+
+- Built with Next.js 14+ and React
+- Uses TypeScript for type safety
+- Styled with Tailwind CSS
+- File-based routing in `src/app` directory
+- Components in `src/components`
+- API routes in `src/app/api`
+
+### Backend (Node.js/Express)
+
+- Built with Express.js
+- Uses TypeScript
+- MVC architecture
+- API routes in `src/routes`
+- Database models in `src/models`
+- Controllers in `src/controllers`
+
+## Environment Variables
+
+### Frontend (.env.local)
+```
+NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret
+```
+
+### Backend (.env)
+```
+PORT=5000
+NODE_ENV=development
+DATABASE_URL=your-database-url
+```
+
+## Documentation
+
+Additional documentation can be found in the `documentation/` directory.
+
+## Contributing
+
+1. Create a new branch for your feature
+2. Make your changes
+3. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License. 
