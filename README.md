@@ -1,31 +1,59 @@
-# web-site
-
-# [Your Project Name]
+# Full Stack Web Application
 
 ## Overview
-This project is developed for [Your Club Name], focusing on building innovative projects using AI and robotics. Our goal is to solve real-world problems and create business opportunities around these solutions.
-
-## Purpose
-- **Innovation**: Develop cutting-edge projects using AI and robotics.
-- **Collaboration**: Foster a community of like-minded individuals to collaborate on projects.
-- **Business Development**: Identify and develop business opportunities around successful projects.
+This is a modern full-stack web application built with Next.js for the frontend and Node.js/Express for the backend, with MongoDB as the database.
 
 ## Features
-- Project management and collaboration tools.
-- AI and robotics project showcase.
-- Business development resources and networking opportunities.
+- Modern and responsive user interface
+- Server-side rendering with Next.js
+- RESTful API backend
+- MongoDB database integration
+- User authentication and authorization
+- Secure session management
+
+## Tech Stack
+- **Frontend**: Next.js, React, TypeScript
+- **Backend**: Node.js, Express
+- **Database**: MongoDB
+- **Authentication**: JWT
 
 ## Getting Started
-1. Clone the repository.
-2. Install dependencies using `npm install`.
-3. Set up environment variables as per the `.env.example` file.
-4. Run the application using `npm start`.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Dhrumin10/site_1.git
+   ```
+
+2. Install dependencies:
+   ```bash
+   # Install frontend dependencies
+   cd frontend
+   npm install
+
+   # Install backend dependencies
+   cd ../backend
+   npm install
+   ```
+
+3. Set up environment variables:
+   - Create `.env` files in both frontend and backend directories
+   - Follow the `.env.example` files for required variables
+
+4. Start the development servers:
+   ```bash
+   # Start backend server
+   cd backend
+   npm run dev
+
+   # Start frontend server (in a new terminal)
+   cd frontend
+   npm run dev
+   ```
 
 ## Contributing
-We welcome contributions from the community. Please read our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## Contact
-For more information, please contact [Your Name] at [Your Email].
+For more information, please contact at turing.ai50@gmail.com
