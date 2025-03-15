@@ -8,9 +8,7 @@ require('dotenv').config();
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
-const mongoose = require('mongoose');
 const compression = require('compression');
-const path = require('path');
 const { errorHandler } = require('./middleware/error');
 const logger = require('./utils/logger');
 
@@ -20,7 +18,13 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// CORS Configuration
+// Debugging - Log incoming request origins
+app.use((req, res, next) => {
+    console.log(`Incoming Request from Origin: ${req.headers.origin}`);
+    next();
+});
+
+// CORS Configuration - Allow frontend access
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'https://site-sable-beta.vercel.app',
     process.env.CORS_ORIGIN || 'https://site-sable-beta.vercel.app'
@@ -31,6 +35,7 @@ const corsOptions = {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.warn(`Blocked by CORS: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
@@ -38,15 +43,12 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
     exposedHeaders: ['Content-Range'],
     credentials: true,
-    maxAge: 600, // Specify pre-flight cache duration (10 minutes)
     optionsSuccessStatus: 204
 };
 
-// Apply CORS before routes
+// Apply CORS
 app.use(cors(corsOptions));
-
-// Handle Preflight Requests
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle CORS Preflight Requests
 
 // Middleware
 app.use(express.json({ limit: '10kb' }));
@@ -74,6 +76,12 @@ app.use('/api/applications', require('./routes/applications'));
 app.use('/api/skills', require('./routes/skills'));
 app.use('/api/ideas', require('./routes/ideas'));
 
+// Debugging - Log all incoming requests for monitoring
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} request to ${req.url}`);
+    next();
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({
@@ -85,7 +93,7 @@ app.get('/health', (req, res) => {
     });
 });
 
-// CORS Error Handler (before other error handlers)
+// CORS Error Handler
 app.use((err, req, res, next) => {
     if (err.message === 'Not allowed by CORS') {
         return res.status(403).json({
@@ -107,7 +115,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Handle 404
+// Handle 404 Not Found
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -134,7 +142,7 @@ process.on('unhandledRejection', (err) => {
     });
 });
 
-// Handle SIGTERM
+// Handle SIGTERM (graceful shutdown)
 process.on('SIGTERM', () => {
     logger.info('👋 SIGTERM RECEIVED. Shutting down gracefully');
     server.close(() => {
@@ -142,6 +150,7 @@ process.on('SIGTERM', () => {
     });
 });
 
+// Start the server
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
