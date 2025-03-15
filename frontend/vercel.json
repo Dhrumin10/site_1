@@ -6,14 +6,8 @@
             "use": "@vercel/next"
         }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/"
-        }
-    ],
     "env": {
-        "NEXT_PUBLIC_API_URL": "https://your-render-app.onrender.com"
+        "NEXT_PUBLIC_API_URL": "https://site-1-kkhg.onrender.com"
     },
     "headers": [
         {
