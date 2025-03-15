@@ -21,11 +21,14 @@ const app = express();
 connectDB();
 
 // CORS Configuration
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'https://site-sable-beta.vercel.app',
+    process.env.CORS_ORIGIN || 'https://site-sable-beta.vercel.app'
+];
+
 const corsOptions = {
     origin: function (origin, callback) {
-        const allowedOrigins = [process.env.FRONTEND_URL, process.env.CORS_ORIGIN];
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -39,21 +42,20 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
+// Apply CORS before routes
+app.use(cors(corsOptions));
+
+// Handle Preflight Requests
+app.options('*', cors(corsOptions));
+
 // Middleware
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(cors(corsOptions));
-
-// Add pre-flight handling for all routes
-app.options('*', cors(corsOptions));
-
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(mongoSanitize());
 app.use(xss());
 app.use(cookieParser(process.env.COOKIE_SECRET));
-
-// Compression
 app.use(compression());
 
 // Rate limiting
@@ -152,4 +154,4 @@ const server = app.listen(PORT, HOST, () => {
     } else {
         logger.error('Server error:', err);
     }
-}); 
+});
