@@ -18,39 +18,23 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Debugging - Log incoming request origins
-app.use((req, res, next) => {
-    console.log(`Incoming Request from Origin: ${req.headers.origin}`);
-    next();
-});
-
-// CORS Configuration - Allow frontend access
+// 🔹 CORS Configuration
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'https://site-sable-beta.vercel.app',
-    process.env.CORS_ORIGIN || 'https://site-sable-beta.vercel.app'
+    process.env.FRONTEND_URL || 'https://site-sable-beta.vercel.app'
 ];
 
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            console.warn(`Blocked by CORS: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: allowedOrigins, // Use dynamic origins
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Range'],
     credentials: true,
     optionsSuccessStatus: 204
 };
 
-// Apply CORS
+// Apply CORS Middleware
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Handle CORS Preflight Requests
 
-// Middleware
+// 🔹 Middleware
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(helmet());
@@ -60,15 +44,21 @@ app.use(xss());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(compression());
 
-// Rate limiting
+// 🔹 Debugging - Log all incoming requests
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} request to ${req.url} from ${req.headers.origin || 'Unknown Origin'}`);
+    next();
+});
+
+// 🔹 Rate Limiting
 const limiter = rateLimit({
-    windowMs: process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000,
-    max: process.env.RATE_LIMIT_MAX || 100,
+    windowMs: process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000, // 15 minutes
+    max: process.env.RATE_LIMIT_MAX || 100, // Max requests
     message: 'Too many requests from this IP, please try again later'
 });
 app.use('/api', limiter);
 
-// Routes
+// 🔹 Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/projects', require('./routes/projects'));
@@ -76,13 +66,7 @@ app.use('/api/applications', require('./routes/applications'));
 app.use('/api/skills', require('./routes/skills'));
 app.use('/api/ideas', require('./routes/ideas'));
 
-// Debugging - Log all incoming requests for monitoring
-app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} request to ${req.url}`);
-    next();
-});
-
-// Health check endpoint
+// 🔹 Health Check Route
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'success',
@@ -93,7 +77,10 @@ app.get('/health', (req, res) => {
     });
 });
 
-// CORS Error Handler
+// 🔹 General Error Handling
+app.use(errorHandler);
+
+// 🔹 Handle CORS Errors
 app.use((err, req, res, next) => {
     if (err.message === 'Not allowed by CORS') {
         return res.status(403).json({
@@ -105,17 +92,7 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-// General Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Something went wrong!',
-        error: process.env.NODE_ENV === 'development' ? err.message : {}
-    });
-});
-
-// Handle 404 Not Found
+// 🔹 Handle 404 Not Found
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -123,34 +100,27 @@ app.use((req, res) => {
     });
 });
 
-// Error handling
-app.use(errorHandler);
-
-// Handle uncaught exceptions
+// 🔹 Handle Uncaught Exceptions
 process.on('uncaughtException', (err) => {
     logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
     logger.error(err.name, err.message, err.stack);
     process.exit(1);
 });
 
-// Handle unhandled promise rejections
+// 🔹 Handle Unhandled Promise Rejections
 process.on('unhandledRejection', (err) => {
     logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
     logger.error(err.name, err.message, err.stack);
-    server.close(() => {
-        process.exit(1);
-    });
+    server.close(() => process.exit(1));
 });
 
-// Handle SIGTERM (graceful shutdown)
+// 🔹 Handle SIGTERM (Graceful Shutdown)
 process.on('SIGTERM', () => {
     logger.info('👋 SIGTERM RECEIVED. Shutting down gracefully');
-    server.close(() => {
-        logger.info('💥 Process terminated!');
-    });
+    server.close(() => logger.info('💥 Process terminated!'));
 });
 
-// Start the server
+// 🔹 Start the Server
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
