@@ -121,14 +121,21 @@ export default function JoinUsPage() {
 
         try {
             if (activeTab === 'application') {
-                // Send application data to backend API
-                await apiClient.createApplication({
+                // Prepare application data
+                const applicationData = {
                     fullName: formData.fullName,
                     email: formData.email,
                     background: formData.background,
                     areaOfInterest: formData.interest,
                     motivation: formData.motivation
-                });
+                };
+
+                console.log('Submitting application with data:', applicationData);
+
+                // Send application data to backend API
+                const response = await apiClient.createApplication(applicationData);
+
+                console.log('Application submitted successfully:', response);
 
                 setFormData({
                     fullName: '',
@@ -137,23 +144,19 @@ export default function JoinUsPage() {
                     interest: '',
                     motivation: ''
                 });
+
+                setSubmitStatus('success');
             } else {
                 // Send idea data to backend API
-                await fetch('http://localhost:5000/api/ideas', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        title: ideaFormData.title,
-                        description: ideaFormData.description,
-                        category: ideaFormData.category,
-                        name: ideaFormData.name,
-                        email: ideaFormData.email,
-                        implementationTimeframe: 'short-term',
-                        expectedImpact: 'medium',
-                        tags: []
-                    })
+                console.log('Submitting idea with data:', ideaFormData);
+
+                // Use the API client instead of direct fetch
+                await apiClient.createIdea({
+                    title: ideaFormData.title,
+                    description: ideaFormData.description,
+                    category: ideaFormData.category,
+                    name: ideaFormData.name,
+                    email: ideaFormData.email
                 });
 
                 setIdeaFormData({
@@ -163,12 +166,18 @@ export default function JoinUsPage() {
                     description: '',
                     category: ''
                 });
-            }
 
-            setSubmitStatus('success');
-        } catch (error) {
+                setSubmitStatus('success');
+            }
+        } catch (error: unknown) {
             console.error('Error submitting form:', error);
             setSubmitStatus('error');
+
+            // Simple error handling
+            setErrors(prev => ({
+                ...prev,
+                form: 'An error occurred. Please try again later.'
+            }));
         } finally {
             setIsSubmitting(false);
         }
