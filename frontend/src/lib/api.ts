@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequ
 import { Application, ApplicationInput } from '@/types/application';
 import { ApiResponse, LoginResponse } from '@/types/auth';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://site-1-kkhg.onrender.com';
 
 const api = axios.create({
     baseURL: BASE_URL,
