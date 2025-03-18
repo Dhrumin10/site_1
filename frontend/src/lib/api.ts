@@ -45,25 +45,31 @@ api.interceptors.response.use(
 // API endpoints
 export const endpoints = {
     auth: {
-        login: '/auth/login',
-        register: '/auth/register',
-        logout: '/auth/logout',
+        login: '/api/auth/login',
+        register: '/api/auth/register',
+        logout: '/api/auth/logout',
     },
     applications: {
-        list: '/applications',
-        create: '/applications',
-        update: (id: string) => `/applications/${id}`,
-        delete: (id: string) => `/applications/${id}`,
+        list: '/api/applications',
+        create: '/api/applications',
+        update: (id: string) => `/api/applications/${id}`,
+        delete: (id: string) => `/api/applications/${id}`,
     },
     projects: {
-        list: '/projects',
-        create: '/projects',
-        update: (id: string) => `/projects/${id}`,
-        delete: (id: string) => `/projects/${id}`,
+        list: '/api/projects',
+        create: '/api/projects',
+        update: (id: string) => `/api/projects/${id}`,
+        delete: (id: string) => `/api/projects/${id}`,
     },
     users: {
-        profile: '/users/profile',
-        update: '/users/profile',
+        profile: '/api/users/profile',
+        update: '/api/users/profile',
+    },
+    ideas: {
+        list: '/api/ideas',
+        create: '/api/ideas',
+        update: (id: string) => `/api/ideas/${id}`,
+        delete: (id: string) => `/api/ideas/${id}`,
     },
 };
 
@@ -92,6 +98,12 @@ export const apiClient = {
 
     async updateApplication(id: string, data: ApplicationInput): Promise<ApiResponse<Application>> {
         return api.patch(endpoints.applications.update(id), data);
+    },
+
+    // Ideas
+    async createIdea(data: IdeaInput) {
+        const response = await api.post<ApiResponse<Idea>>(endpoints.ideas.create, data);
+        return response.data;
     },
 
     // Projects
@@ -135,6 +147,24 @@ export interface User {
     fullName: string;
     role: 'user' | 'admin';
     avatarUrl?: string;
+}
+
+export interface Idea {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    name: string;
+    email: string;
+    createdAt: string;
+}
+
+export interface IdeaInput {
+    title: string;
+    description: string;
+    category: string;
+    name: string;
+    email: string;
 }
 
 export default apiClient; 
