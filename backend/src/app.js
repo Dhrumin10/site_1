@@ -18,13 +18,20 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// 🔹 CORS Configuration
+// 🔹 CORS Configuration (Improved)
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'https://site-sable-beta.vercel.app'
+    'https://site-sable-beta.vercel.app',
+    process.env.FRONTEND_URL
 ];
 
 const corsOptions = {
-    origin: allowedOrigins, // Use dynamic origins
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -33,6 +40,15 @@ const corsOptions = {
 
 // Apply CORS Middleware
 app.use(cors(corsOptions));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://site-sable-beta.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // 🔹 Middleware
 app.use(express.json({ limit: '10kb' }));
@@ -47,6 +63,7 @@ app.use(compression());
 // 🔹 Debugging - Log all incoming requests
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} request to ${req.url} from ${req.headers.origin || 'Unknown Origin'}`);
+    console.log('Request Body:', req.body);
     next();
 });
 
@@ -58,11 +75,11 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// 🔹 Routes
+// 🔹 Routes (Ensure API routes exist)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/projects', require('./routes/projects'));
-app.use('/api/applications', require('./routes/applications'));
+app.use('/api/applications', require('./routes/applications')); // Ensure route exists
 app.use('/api/skills', require('./routes/skills'));
 app.use('/api/ideas', require('./routes/ideas'));
 
