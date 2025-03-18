@@ -21,14 +21,17 @@ connectDB();
 // 🔹 CORS Configuration (Improved)
 const allowedOrigins = [
     'https://site-sable-beta.vercel.app',
-    process.env.FRONTEND_URL
+    process.env.FRONTEND_URL,
+    'http://localhost:3000' // Add localhost for development
 ];
 
 const corsOptions = {
     origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, etc)
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.log(`Origin ${origin} not allowed by CORS`);
             callback(new Error('Not allowed by CORS'));
         }
     },
@@ -40,15 +43,6 @@ const corsOptions = {
 
 // Apply CORS Middleware
 app.use(cors(corsOptions));
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://site-sable-beta.vercel.app');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
 
 // 🔹 Middleware
 app.use(express.json({ limit: '10kb' }));
